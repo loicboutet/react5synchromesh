@@ -8,6 +8,3 @@ Synchromesh.configuration do |config|
     seconds_polled_data_will_be_retained: 1.hour
   }
 end
-
-
-https://github.com/barriehadfield/reactrb-showcase/
