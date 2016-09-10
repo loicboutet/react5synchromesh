@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/reactrb/synchromesh.git
-  revision: 4f693cc3aae2b9177075d48c3dddcb605d5eb77c
+  revision: 044ae03bada9baa676fa50523792261accd97dcc
+  branch: authorization-policies
   specs:
     synchromesh (0.4.0)
       activerecord (>= 0.3.0)
@@ -93,7 +94,7 @@ GEM
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
-    opal (0.10.1)
+    opal (0.10.2)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
       sprockets (~> 3.1)

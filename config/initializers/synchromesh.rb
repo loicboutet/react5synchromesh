@@ -8,3 +8,8 @@ Synchromesh.configuration do |config|
     seconds_polled_data_will_be_retained: 1.hour
   }
 end
+
+class ApplicationPolicy
+  always_allow_connection
+  regulate_all_broadcasts { |policy| policy.send_all }
+end
