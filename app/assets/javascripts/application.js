@@ -16,6 +16,17 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require 'webpack/client_only'
+
+// app/assets/javascripts/cable.js
+//= require action_cable
+//x = require_self
+//x = require_tree ./channels
+
+(function() {
+  this.App || (this.App = {});
+
+  App.cable = ActionCable.createConsumer();
+}).call(this);
 Opal.load('components');
 //= require turbolinks
 //= require_tree .

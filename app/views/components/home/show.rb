@@ -19,18 +19,52 @@ module Components
         @posts = Post.all
       end
 
+      def say(message)
+        HTTP.post("/say/#{message}")
+      end
+
+      def subscribe(to)
+        %x{
+          App.cable.subscriptions.create(
+            {
+              channel: "SynchromeshChannel",
+              synchromesh_channel: #{to}
+            },
+            {
+              received: function(data) {
+                #{yield Hash.new(`data`)}
+                return true
+              }
+            }
+          )
+        }
+      end
+
 
       after_mount do
-        init_datepicker
+        #init_datepicker
+        # can't subscribe during prerendering :-)
+        subscribe('Application') { |data| state.message! data[:message] }
       end
 
       def render
         div do
           p { "Internal state : #{internal}" }
           p { "Internal2 state : #{internal2}" }
+          p { "Message from ActionCable : #{state.message}"}
           a { "increment internal state" }
             .on(:click) { state.internal! state.internal + 1 }
           OtherComponent().on(:increment) { internal2! internal2 + 1 }
+          ['hi', 'bye', 'wazzup'].each do |message|
+            button { "say #{message}" }.on(:click) { say(message) }
+          end
+          p do
+            button { "bogus connection" }
+            .on(:click) do
+              subscribe('explode') # this tests or ability to avoid making an illegal connection
+              alert('check out the server log for the error')
+            end
+          end
           ul do
             @posts.each do |p|
               li { p.title }
