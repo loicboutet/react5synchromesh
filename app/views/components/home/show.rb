@@ -13,10 +13,14 @@ module Components
         `$('#datepicker').datepicker();`
       end
 
+      define_state :text
+      define_state :message
+
       before_mount do
         # note that this will lazy load posts
         # and only the fields that are needed will be requested
-        @posts = Post.all
+        #@posts = Post.all
+        state.text = ""
       end
 
       def say(message)
@@ -25,10 +29,9 @@ module Components
 
       def subscribe(to)
         %x{
-          App.cable.subscriptions.create(
+          App2.cable.subscriptions.create(
             {
-              channel: "SynchromeshChannel",
-              synchromesh_channel: #{to}
+              channel: #{to}
             },
             {
               received: function(data) {
@@ -44,30 +47,35 @@ module Components
       after_mount do
         #init_datepicker
         # can't subscribe during prerendering :-)
-        subscribe('Application') { |data| state.message! data[:message] }
+        subscribe('OtherChannel') { |data| state.message! data[:message] }
+      end
+
+      def say(message)
+        HTTP.post("/say/#{message}")
       end
 
       def render
         div do
-          p { "Internal state : #{internal}" }
-          p { "Internal2 state : #{internal2}" }
-          p { "Message from ActionCable : #{state.message}"}
-          a { "increment internal state" }
-            .on(:click) { state.internal! state.internal + 1 }
-          OtherComponent().on(:increment) { internal2! internal2 + 1 }
-          ['hi', 'bye', 'wazzup'].each do |message|
-            button { "say #{message}" }.on(:click) { say(message) }
+          div do
+            "message on another channel: #{state.message}"
           end
-          p do
-            button { "bogus connection" }
-            .on(:click) do
-              subscribe('explode') # this tests or ability to avoid making an illegal connection
-              alert('check out the server log for the error')
+          div do
+            ['hi', 'bye', 'wazzup'].each do |message|
+              button { "say #{message}" }.on(:click) { say(message) }
+            end
+          end
+          div do
+            input(value: state.text).on(:change) do |e|
+              state.text! e.target.value
+            end
+            button { "Post" }.on(:click) do |e|
+              Post.new(title: state.text).save
+              state.text! ""
             end
           end
           ul do
-            @posts.each do |p|
-              li { p.title }
+            Post.all.each do |p|
+              li { button { "X" }.on(:click) { p.destroy }; p.title }
             end
           end
         end

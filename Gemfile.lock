@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/reactrb/synchromesh.git
-  revision: 044ae03bada9baa676fa50523792261accd97dcc
+  revision: 46eb8f5b82845bcebce205ebb6a111fb4fc52a25
   branch: authorization-policies
   specs:
     synchromesh (0.4.0)
